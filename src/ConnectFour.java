@@ -90,6 +90,17 @@ public class ConnectFour {
                 }
             }
         }
+        // diagonali /
+        for (int i = 0; i < ROWS - 3; i++) {
+            for (int j = 0; j < COLUMNS - 3; j++) {
+                if(board[i][j].getLabel() == board[i][j + 1].getLabel() &&
+                        board[i][j].getLabel() == board[i][j + 2].getLabel() &&
+                        board[i][j].getLabel() == board[i][j + 3].getLabel() &&
+                        board[i][j].getLabel() != Token.emptyToken){ // se ce ne sono 4 di fila
+                    return true;
+                }
+            }
+        }
         return false;
     }
 }
