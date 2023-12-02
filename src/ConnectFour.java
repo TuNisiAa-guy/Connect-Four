@@ -12,6 +12,9 @@ public class ConnectFour {
         fillBoard();
         for (int i = 0; i < ROWS * COLUMNS; i++) {
             gameLoop();
+            if(isWin()){
+                System.out.println("Qualcuno ha vinto");
+            }
         }
         System.out.println("The game ended in a tie.\nThe game will close in 5 seconds.");
         try {
@@ -49,7 +52,7 @@ public class ConnectFour {
         addToken(sc.nextInt() - 1);
     }
     private void addToken(int column){
-        for (int i = ROWS - 1; i >= 0; i++) {
+        for (int i = ROWS - 1; i >= 0; i--) {
             if(board[i][column].getLabel() == Token.emptyToken){ //     Se è vuoto
                 board[i][column] = new Token(turn % 2 == 0); // sui turni pari da un simbolo e sui dispari l'altro
                 return;
@@ -57,5 +60,31 @@ public class ConnectFour {
         }
         System.out.println("The chosen column is full!");
         turn--;
+    }
+
+    private boolean isWin(){
+        // 4 in verticale
+        for (int i = 0; i < COLUMNS; i++) {
+            for (int j = 0; j < ROWS - 4; j++) { // - 4 perchè ne servono 4 in fila
+                if(board[j][i].getLabel() == board[j + 1][i].getLabel() &&
+                   board[j][i].getLabel() == board[j + 2][i].getLabel() &&
+                   board[j][i].getLabel() == board[j + 3][i].getLabel() &&
+                   board[j][i].getLabel() != Token.emptyToken){ // se ce ne sono 4 di fila
+                    return true;
+                }
+            }
+        }
+        // 4 in orizzontale
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS - 4; j++) { // - 4 perchè ne servono 4 in fila
+                if(board[i][j].getLabel() == board[i][j + 1].getLabel() &&
+                   board[i][j].getLabel() == board[i][j + 2].getLabel() &&
+                   board[i][j].getLabel() == board[i][j + 3].getLabel() &&
+                   board[i][j].getLabel() != Token.emptyToken){ // se ce ne sono 4 di fila
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
