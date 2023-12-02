@@ -1,6 +1,6 @@
 public class Token{
     private char label;
-    public final char emptyToken = '◌';
+    public static final char emptyToken = '◌';
     private final char darkToken = '●';
     private final char lightToken = '○';
     public Token(boolean isPlayer1){
