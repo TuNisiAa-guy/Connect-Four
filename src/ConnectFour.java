@@ -13,16 +13,21 @@ public class ConnectFour {
         for (int i = 0; i < ROWS * COLUMNS; i++) {
             gameLoop();
             if(isWin()){
-                System.out.println("Qualcuno ha vinto");
+                render();
+                System.out.printf("Player %d has won!\n", (turn - 1) % 2 + 1);
+                break;
             }
         }
-        System.out.println("The game ended in a tie.\nThe game will close in 5 seconds.");
+        if(!isWin()){
+            System.out.println("The game ended in a tie.");
+        }
+        System.out.println("The game will close in 5 seconds.");
         try {
             TimeUnit.SECONDS.sleep(5);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        System.exit(69);
+        System.exit(0);
     }
     private void gameLoop(){
         System.out.printf("%dth turn:\n", ++turn);
@@ -65,7 +70,7 @@ public class ConnectFour {
     private boolean isWin(){
         // 4 in verticale
         for (int i = 0; i < COLUMNS; i++) {
-            for (int j = 0; j < ROWS - 4; j++) { // - 4 perchè ne servono 4 in fila
+            for (int j = 0; j < ROWS - 3; j++) { // - 4 perchè ne servono 4 in fila
                 if(board[j][i].getLabel() == board[j + 1][i].getLabel() &&
                    board[j][i].getLabel() == board[j + 2][i].getLabel() &&
                    board[j][i].getLabel() == board[j + 3][i].getLabel() &&
@@ -76,7 +81,7 @@ public class ConnectFour {
         }
         // 4 in orizzontale
         for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLUMNS - 4; j++) { // - 4 perchè ne servono 4 in fila
+            for (int j = 0; j < COLUMNS - 3; j++) { // - 4 perchè ne servono 4 in fila
                 if(board[i][j].getLabel() == board[i][j + 1].getLabel() &&
                    board[i][j].getLabel() == board[i][j + 2].getLabel() &&
                    board[i][j].getLabel() == board[i][j + 3].getLabel() &&
