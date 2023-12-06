@@ -75,7 +75,7 @@ public class ConnectFour {
     private void removeLastToken(int column){
         for (int i = ROWS - 1; i >= 0; i--) {
             if(board[i][column].getLabel() == Token.emptyToken){ //     Se è vuoto
-                board[i - 1][column] = new Token();
+                board[i + 1][column] = new Token();
                 return;
             }
         }
