@@ -135,7 +135,6 @@ public class ConnectFour {
         return winner;
     }
     public class MiniMaxBot{
-        double bestScore = 0;
         public void bestMove() {
             // AI to make its turn
             double bestScore = Double.NEGATIVE_INFINITY;
@@ -156,13 +155,14 @@ public class ConnectFour {
         }
 
         public double minimax(int depth, boolean isMaximizing){
+            double bestScore = 0;
             char winner = hasWon();
             switch(winner){
                 case Token.darkToken /*giocatore*/ -> {
-                    return -1;
+                    return -10;
                 }
                 case Token.lightToken /*robot*/ -> {
-                    return 1;
+                    return 10;
                 }
                 case '=' -> {
                     return 0; //patta
@@ -173,24 +173,23 @@ public class ConnectFour {
                 for (int i = 0; i < COLUMNS; i++) { // controlliamo ogni colonna
                     if(board[0][i].getLabel() == Token.emptyToken){ //se non è piena
                         addToken(i);
-                        double score = minimax(depth - 1, false);
+                        double score = minimax(depth + 1, false);
                         removeLastToken(i);
-                        return Math.max(score, bestScore);
+                        bestScore = Math.max(score, bestScore);
                     }
                 }
-                return bestScore;
             }else{
                 bestScore = Double.POSITIVE_INFINITY; // mettiamo il massimo punteggio possibile in modo da cercare il punteggio minore
                 for (int i = 0; i < COLUMNS; i++) { // controlliamo ogni colonna
                     if(board[0][i].getLabel() == Token.emptyToken){ //se non è piena
                         addToken(i);
-                        double score = minimax(depth - 1, true);
+                        double score = minimax(depth + 1, true);
                         removeLastToken(i);
-                        return Math.min(score, bestScore);
+                        bestScore = Math.min(score, bestScore);
                     }
                 }
-                return bestScore;
             }
+            return bestScore;
         }
     }
 }
