@@ -142,7 +142,7 @@ public class ConnectFour {
             int move = 1;
             for (int i = 0; i < COLUMNS; i++) {
                 // Is the spot available?
-                if (board[ROWS - 1][i].getLabel() == Token.emptyToken) {
+                if (board[0][i].getLabel() == Token.emptyToken) {
                     addToken(i);
                     double score = minimax(0, false);
                     removeLastToken(i);
@@ -171,7 +171,7 @@ public class ConnectFour {
             if(isMaximizing){
                 bestScore = Double.NEGATIVE_INFINITY; // mettiamo il minimo punteggio possibile in modo da cercare il punteggio maggiore
                 for (int i = 0; i < COLUMNS; i++) { // controlliamo ogni colonna
-                    if(board[ROWS - 1][i].getLabel() == Token.emptyToken){ //se non è piena
+                    if(board[0][i].getLabel() == Token.emptyToken){ //se non è piena
                         addToken(i);
                         double score = minimax(depth - 1, false);
                         removeLastToken(i);
@@ -182,7 +182,7 @@ public class ConnectFour {
             }else{
                 bestScore = Double.POSITIVE_INFINITY; // mettiamo il massimo punteggio possibile in modo da cercare il punteggio minore
                 for (int i = 0; i < COLUMNS; i++) { // controlliamo ogni colonna
-                    if(board[ROWS - 1][i].getLabel() == Token.emptyToken){ //se non è piena
+                    if(board[0][i].getLabel() == Token.emptyToken){ //se non è piena
                         addToken(i);
                         double score = minimax(depth - 1, true);
                         removeLastToken(i);
