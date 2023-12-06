@@ -1,3 +1,4 @@
+import java.rmi.UnexpectedException;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
@@ -12,13 +13,13 @@ public class ConnectFour {
         fillBoard();
         for (int i = 0; i < ROWS * COLUMNS; i++) {
             gameLoop();
-            if(isWin()){
+            if(hasWon() != Token.emptyToken){
                 render();
-                System.out.printf("Player %d has won!\n", (turn - 1) % 2 + 1);
+                System.out.printf("%s has won!\n", hasWon());
                 break;
             }
         }
-        if(!isWin()){
+        if(hasWon() == Token.emptyToken){
             System.out.println("The game ended in a tie.");
         }
         System.out.println("The game will close in 5 seconds.");
@@ -30,9 +31,14 @@ public class ConnectFour {
         System.exit(0);
     }
     private void gameLoop(){
+        MiniMaxBot bot = new MiniMaxBot();
         System.out.printf("%dth turn:\n", ++turn);
         render();
-        getUserInput();
+        if(turn % 2 == 1){
+            getUserInput();
+        }else{
+            bot.bestMove();
+        }
     }
     private void render(){
         for (int i = 0; i < ROWS; i++) {
@@ -66,8 +72,17 @@ public class ConnectFour {
         System.out.println("The chosen column is full!");
         turn--;
     }
+    private void removeLastToken(int column){
+        for (int i = ROWS - 1; i >= 0; i--) {
+            if(board[i][column].getLabel() == Token.emptyToken){ //     Se è vuoto
+                board[i - 1][column] = new Token();
+                return;
+            }
+        }
+    }
 
-    private boolean isWin(){
+    private char hasWon(){ //restituisce il simbolo del vincitore, '=' se è patta o il simbolo vuoto se non è finita
+        char winner = '=';
         // 4 in verticale
         for (int i = 0; i < COLUMNS; i++) {
             for (int j = 0; j < ROWS - 3; j++) { // - 4 perchè ne servono 4 in fila
@@ -75,7 +90,7 @@ public class ConnectFour {
                    board[j][i].getLabel() == board[j + 2][i].getLabel() &&
                    board[j][i].getLabel() == board[j + 3][i].getLabel() &&
                    board[j][i].getLabel() != Token.emptyToken){ // se ce ne sono 4 di fila
-                    return true;
+                    return board[j][i].getLabel();
                 }
             }
         }
@@ -86,7 +101,7 @@ public class ConnectFour {
                    board[i][j].getLabel() == board[i][j + 2].getLabel() &&
                    board[i][j].getLabel() == board[i][j + 3].getLabel() &&
                    board[i][j].getLabel() != Token.emptyToken){ // se ce ne sono 4 di fila
-                    return true;
+                    return board[i][j].getLabel();
                 }
             }
         }
@@ -97,7 +112,7 @@ public class ConnectFour {
                         board[i][j].getLabel() == board[i - 2][j + 2].getLabel() &&
                         board[i][j].getLabel() == board[i - 3][j + 3].getLabel() &&
                         board[i][j].getLabel() != Token.emptyToken){ // se ce ne sono 4 di fila
-                    return true;
+                    return board[i][j].getLabel();
                 }
             }
         }
@@ -108,10 +123,74 @@ public class ConnectFour {
                         board[i][j].getLabel() == board[i + 2][j + 2].getLabel() &&
                         board[i][j].getLabel() == board[i + 3][j + 3].getLabel() &&
                         board[i][j].getLabel() != Token.emptyToken){ // se ce ne sono 4 di fila
-                    return true;
+                    return board[i][j].getLabel();
                 }
             }
         }
-        return false;
+        for (int i = 0; i < COLUMNS; i++) {
+            if(board[0][i].getLabel() == Token.emptyToken){
+                winner = Token.emptyToken; // se la partita non è finita
+            }
+        }
+        return winner;
+    }
+    public class MiniMaxBot{
+        double bestScore = 0;
+        public void bestMove() {
+            // AI to make its turn
+            double bestScore = Double.NEGATIVE_INFINITY;
+            int move = 1;
+            for (int i = 0; i < COLUMNS; i++) {
+                // Is the spot available?
+                if (board[ROWS - 1][i].getLabel() == Token.emptyToken) {
+                    addToken(i);
+                    double score = minimax(0, false);
+                    removeLastToken(i);
+                    if (score > bestScore) {
+                        bestScore = score;
+                        move = i;
+                    }
+                }
+            }
+            addToken(move);
+        }
+
+        public double minimax(int depth, boolean isMaximizing){
+            char winner = hasWon();
+            switch(winner){
+                case Token.darkToken /*giocatore*/ -> {
+                    return -1;
+                }
+                case Token.lightToken /*robot*/ -> {
+                    return 1;
+                }
+                case '=' -> {
+                    return 0; //patta
+                }
+            }
+            if(isMaximizing){
+                bestScore = Double.NEGATIVE_INFINITY; // mettiamo il minimo punteggio possibile in modo da cercare il punteggio maggiore
+                for (int i = 0; i < COLUMNS; i++) { // controlliamo ogni colonna
+                    if(board[ROWS - 1][i].getLabel() == Token.emptyToken){ //se non è piena
+                        addToken(i);
+                        double score = minimax(depth - 1, false);
+                        removeLastToken(i);
+                        return Math.max(score, bestScore);
+                    }
+                }
+                return bestScore;
+            }else{
+                bestScore = Double.POSITIVE_INFINITY; // mettiamo il massimo punteggio possibile in modo da cercare il punteggio minore
+                for (int i = 0; i < COLUMNS; i++) { // controlliamo ogni colonna
+                    if(board[ROWS - 1][i].getLabel() == Token.emptyToken){ //se non è piena
+                        addToken(i);
+                        double score = minimax(depth - 1, true);
+                        removeLastToken(i);
+                        return Math.min(score, bestScore);
+                    }
+                }
+                return bestScore;
+            }
+        }
     }
 }
