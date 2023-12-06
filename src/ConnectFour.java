@@ -73,9 +73,9 @@ public class ConnectFour {
         turn--;
     }
     private void removeLastToken(int column){
-        for (int i = ROWS - 1; i >= 0; i--) {
-            if(board[i][column].getLabel() == Token.emptyToken){ //     Se è vuoto
-                board[i + 1][column] = new Token();
+        for (int i = 0; i < ROWS; i++) {
+            if(board[i][column].getLabel() != Token.emptyToken){ //     Se è vuoto
+                board[i][column] = new Token();
                 return;
             }
         }
@@ -94,13 +94,22 @@ public class ConnectFour {
                 }
             }
         }
-        // 4 in orizzontale
+
         for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLUMNS - 3; j++) { // - 4 perchè ne servono 4 in fila
+
+            for (int j = 0; j < COLUMNS - 3; j++) { // - 3 perchè ne servono 4 in fila
+                // 4 in orizzontale
                 if(board[i][j].getLabel() == board[i][j + 1].getLabel() &&
                    board[i][j].getLabel() == board[i][j + 2].getLabel() &&
                    board[i][j].getLabel() == board[i][j + 3].getLabel() &&
                    board[i][j].getLabel() != Token.emptyToken){ // se ce ne sono 4 di fila
+                    return board[i][j].getLabel();
+                }
+                //diagonali \
+                if(board[i][j].getLabel() == board[i - 1][j + 1].getLabel() &&
+                        board[i][j].getLabel() == board[i - 2][j + 2].getLabel() &&
+                        board[i][j].getLabel() == board[i - 3][j + 3].getLabel() &&
+                        board[i][j].getLabel() != Token.emptyToken){ // se ce ne sono 4 di fila
                     return board[i][j].getLabel();
                 }
             }
@@ -108,12 +117,7 @@ public class ConnectFour {
         // diagonali /
         for (int i = 3; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS - 3; j++) {
-                if(board[i][j].getLabel() == board[i - 1][j + 1].getLabel() &&
-                        board[i][j].getLabel() == board[i - 2][j + 2].getLabel() &&
-                        board[i][j].getLabel() == board[i - 3][j + 3].getLabel() &&
-                        board[i][j].getLabel() != Token.emptyToken){ // se ce ne sono 4 di fila
-                    return board[i][j].getLabel();
-                }
+
             }
         }
         // diagonali \
@@ -155,7 +159,7 @@ public class ConnectFour {
         }
 
         public double minimax(int depth, boolean isMaximizing){
-            double bestScore = 0;
+            double bestScore;
             char winner = hasWon();
             switch(winner){
                 case Token.darkToken /*giocatore*/ -> {
