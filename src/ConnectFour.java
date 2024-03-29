@@ -6,14 +6,17 @@ public class ConnectFour {
     private final int COLUMNS = 7;
     private Token[][] board = new Token[ROWS][COLUMNS];
     private int turn = 0;
+    private GUI gui;
     public ConnectFour(){
+        gui = new GUI();
     }
     public void startGame(){
         fillBoard();
         while(turn <= ROWS * COLUMNS){
             gameLoop();
             if(hasWon() != Token.emptyToken){
-                render();
+                //render();
+                gui.render(board);
                 System.out.printf("%s has won!\n", hasWon());
                 break;
             }
@@ -31,7 +34,8 @@ public class ConnectFour {
     }
     private void gameLoop(){
         System.out.printf("%dth turn:\n", ++turn);
-        render();
+        //render();
+        gui.render(board);
         if(turn % 2 == 1){
             getUserInput();
         }else{
