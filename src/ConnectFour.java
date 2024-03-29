@@ -1,3 +1,4 @@
+import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
@@ -8,7 +9,7 @@ public class ConnectFour {
     private int turn = 0;
     private GUI gui;
     public ConnectFour(){
-        gui = new GUI();
+        gui = new GUI(this);
     }
     public void startGame(){
         fillBoard();
@@ -17,6 +18,7 @@ public class ConnectFour {
             if(hasWon() != Token.emptyToken){
                 //render();
                 gui.render(board);
+                gui.setVictory(hasWon() == Token.darkToken);
                 System.out.printf("%s has won!\n", hasWon());
                 break;
             }
@@ -39,8 +41,9 @@ public class ConnectFour {
         if(turn % 2 == 1){
             getUserInput();
         }else{
-            BotTrePuntoZero btpz = new BotTrePuntoZero();
-            addToken(btpz.getBestMove(), true);
+            addToken(mustMove(), true);
+            /*BotTrePuntoZero btpz = new BotTrePuntoZero();
+            addToken(btpz.getBestMove(), true);*/
         }
     }
     private void render(){
@@ -61,9 +64,17 @@ public class ConnectFour {
         }
     }
     private void getUserInput(){
-        Scanner sc = new Scanner(System.in);
+        do {
+            try {
+                TimeUnit.MILLISECONDS.sleep(50);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }while(gui.getChosenColumn() == 0);
+        addToken(gui.getChosenColumn(), false);
+        /*Scanner sc = new Scanner(System.in);
         System.out.println("Where do you want to put your token? insert the number of the column from 1 to " + COLUMNS);
-        addToken(sc.nextInt() - 1, turn % 2 == 0);
+        addToken(sc.nextInt() - 1, turn % 2 == 0);*/
     }
     private void addToken(int column, boolean isPlayer1){
         for (int i = ROWS - 1; i >= 0; i--) {
@@ -137,11 +148,12 @@ public class ConnectFour {
         }
         return winner;
     }
-    /*
-    VERSIONE 2
+
+    //VERSIONE 2
 
     public int mustMove(){ // se una mossa pul portare alla vittoria di una delle due parti DEVE essere fatta, o per vincere o per bloccare
                            // il robot non è comunque invincibile perchè se viene attaccato in due modi diversi può solo fare una mossa
+        gui.setChosenColumn((byte) 0);
         for (int i = 0; i < COLUMNS; i++) {
             // La colonna è piena?
             if (board[0][i].getLabel() == Token.emptyToken) {
@@ -161,8 +173,8 @@ public class ConnectFour {
                 removeLastToken(i);
             }
         }
-        return 0;
-    }*/
+        return new Random().nextInt(ROWS) + 1;
+    }
 
 
     /* non abbastanza efficiente per il gioco che abbiamo noi, ci mette troppo a scegliere una mossa e non sono sicuro che scelga la migliore :(
@@ -229,7 +241,8 @@ public class ConnectFour {
         }
     }
     */
-    class BotTrePuntoZero{ // ispirato da Bellemo Nicolò
+
+    /*class BotTrePuntoZero{ // ispirato da Bellemo Nicolò
         private int[] scores = new int[COLUMNS];
         public BotTrePuntoZero(){
 
@@ -286,5 +299,5 @@ public class ConnectFour {
             }
             return bestPlace;
         }
-    }
+    }*/
 }
